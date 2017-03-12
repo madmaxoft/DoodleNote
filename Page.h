@@ -13,6 +13,7 @@
 
 
 
+#include <memory>
 #include <QGraphicsScene>
 #include "Stroke.h"
 
@@ -28,30 +29,16 @@ class QDataStream;
 
 
 class Page:
-	public QGraphicsScene
+	public QObject
 {
 	Q_OBJECT
-	typedef QGraphicsScene Super;
+	typedef QObject Super;
 
 
 public:
 
-	/** Identifies the tool currently selected. */
-	enum Tool
-	{
-		toolSelect,
-		toolDraw,
-	};
-
-
 	/** Creates a new empty page. */
 	Page();
-
-	/** Returns the currently selected tool. */
-	Tool currentTool();
-
-	/** Selects the specified tool. */
-	void setCurrentTool(Tool a_Tool);
 
 	/** Saves all page data into the specified stream. */
 	void saveToStream(QDataStream & a_Stream) const;
@@ -60,36 +47,28 @@ public:
 	Throws an exception on failure. */
 	void loadFromStream(QDataStream & a_Stream);
 
-	/** Adds a new stroke to the internal representation, returns a shared ptr to it. */
+	/** Adds a new empty stroke to the internal representation, returns a shared ptr to it. */
 	StrokePtr addStroke();
 
-protected:
+	/** Adds a new stroke with a single point to the internal representation.
+	Returns a shared ptr to the new stroke. */
+	StrokePtr addStroke(qreal a_X, qreal a_Y);
 
-	/** The tool currently selected. */
-	Tool m_CurrentTool;
+	/** Returns all the strokes in the page, read-only. */
+	const StrokePtrs & strokes() const { return m_Strokes; }
+
+protected:
 
 	/** Individual strokes comprising the page. */
 	StrokePtrs m_Strokes;
 
-	/** The stroke currentply being drawn (nullptr if none). */
-	StrokePtr m_CurrentlyDrawnStroke;
-
-	/** The representation of m_CurrentlyDrawnStroke in the scene (nullptr if none). */
-	QGraphicsPathItem * m_CurrentlyDrawnStrokePath;
-
-	/** The timepoint when the currently drawn stroke was started. */
-	std::chrono::high_resolution_clock::time_point m_CurrentlyDrawnStrokeTimeStart;
-
-
-	// QGraphicsScene overrides:
-	void mousePressEvent  (QGraphicsSceneMouseEvent * a_MouseEvent) override;
-	void mouseMoveEvent   (QGraphicsSceneMouseEvent * a_MouseEvent) override;
-	void mouseReleaseEvent(QGraphicsSceneMouseEvent * a_MouseEvent) override;
 
 	/** Loads all page data from the specified stream, after it was decided that it is a version 0 stream.
 	Throws an exception on failure. */
 	void loadFromStreamV0(QDataStream & a_Stream);
 };
+
+typedef std::shared_ptr<Page> PagePtr;
 
 
 

@@ -28,12 +28,14 @@ SOURCES += \
 	Main.cpp \
 	Document.cpp \
 	Page.cpp \
-	Stroke.cpp
+	Stroke.cpp \
+	PageScene.cpp
 
 HEADERS  += \
 	MainWindow.h \
 	Document.h \
 	Page.h \
-	Stroke.h
+	Stroke.h \
+	PageScene.h
 
 FORMS    += MainWindow.ui

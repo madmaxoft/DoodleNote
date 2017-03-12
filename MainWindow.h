@@ -16,6 +16,7 @@
 
 #include <memory>
 #include <QMainWindow>
+#include "PageScene.h"
 
 
 
@@ -87,6 +88,9 @@ protected:
 
 	/** The document currently loaded. */
 	std::shared_ptr<Document> m_Document;
+
+	/** The convertor from Page to QGraphicScene, used for display and interaction. */
+	PageScene m_PageScene;
 
 
 	/** If the document is modified, asks the user whether to save.

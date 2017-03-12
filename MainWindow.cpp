@@ -22,10 +22,10 @@ MainWindow::MainWindow(QWidget * a_Parent):
 	m_UI(new Ui::MainWindow),
 	m_Document(std::make_shared<Document>())
 {
-	auto currentPage = m_Document->currentPage();
-	currentPage->setCurrentTool(Page::toolDraw);
+	m_PageScene.setPage(m_Document->currentPage());
+	m_PageScene.setCurrentTool(PageScene::toolDraw);
 	m_UI->setupUi(this);
-	m_UI->gvMain->setScene(currentPage.get());
+	m_UI->gvMain->setScene(&m_PageScene);
 	m_UI->gvMain->setRenderHint(QPainter::Antialiasing, true);
 	// TODO: m_UI->gvMain->setDragMode(QGraphicsView::RubberBandDrag);
 
@@ -33,8 +33,8 @@ MainWindow::MainWindow(QWidget * a_Parent):
 	auto grp = new QActionGroup(this);
 	grp->addAction(m_UI->actActionSelect);
 	grp->addAction(m_UI->actActionDraw);
-	m_UI->actActionSelect->setProperty("tool", Page::toolSelect);
-	m_UI->actActionDraw->setProperty  ("tool", Page::toolDraw);
+	m_UI->actActionSelect->setProperty("tool", PageScene::toolSelect);
+	m_UI->actActionDraw->setProperty  ("tool", PageScene::toolDraw);
 	connect(grp, SIGNAL(triggered(QAction *)), this, SLOT(toolSelected(QAction *)));
 
 	// Set up the action connections:
@@ -100,7 +100,7 @@ void MainWindow::openFile(const QString & a_FileName)
 		return;
 	}
 	m_Document = doc;
-	m_UI->gvMain->setScene(m_Document->currentPage().get());
+	m_PageScene.setPage(m_Document->currentPage());
 }
 
 
@@ -171,7 +171,7 @@ bool MainWindow::saveFileAs(const QString & a_FileName)
 
 void MainWindow::toolSelected(QAction * a_Action)
 {
-	m_Document->currentPage()->setCurrentTool(static_cast<Page::Tool>(a_Action->property("tool").toInt()));
+	m_PageScene.setCurrentTool(static_cast<PageScene::Tool>(a_Action->property("tool").toInt()));
 }
 
 
