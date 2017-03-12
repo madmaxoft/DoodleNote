@@ -52,6 +52,27 @@ public:
 	~MainWindow();
 
 
+public slots:
+
+	/** Shows an "open file" dialog and opens the selected file. */
+	void openFile();
+
+	/** Opens the specified file. */
+	void openFile(const QString & a_FileName);
+
+	/** Saves the current file to m_FileName.
+	If no filename is stored, calls saveFileAs to show the "save file as" dialog.
+	Returns true if the file is saved successfully, false on failure / cancellation. */
+	bool saveFile();
+
+	/** Shows a "save file as" dialog and saves the document to the specified file.
+	Returns true on success, false on failure / cancellation. */
+	bool saveFileAs();
+
+	/** Saves the document data into the specified file.
+	Returns true on success, false on failure / cancellation. */
+	bool saveFileAs(const QString & a_FileName);
+
 protected slots:
 
 	/** Triggered by the Tool selection actions.
@@ -59,7 +80,7 @@ protected slots:
 	void toolSelected(QAction * a_Action);
 
 
-private:
+protected:
 
 	/** The UI. */
 	std::shared_ptr<Ui::MainWindow> m_UI;
@@ -67,8 +88,11 @@ private:
 	/** The document currently loaded. */
 	std::shared_ptr<Document> m_Document;
 
-	/** The page (out of m_Document) currently displayed. */
-	std::shared_ptr<Page> m_CurrentPage;
+
+	/** If the document is modified, asks the user whether to save.
+	Returns true if either the document is saved or the user wants to discard changes.
+	Returns false if the next action (opening / exiting / ...) should be aborted. */
+	bool checkDocumentModifiedSave();
 };
 
 

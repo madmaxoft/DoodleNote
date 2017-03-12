@@ -20,6 +20,13 @@
 
 
 
+// fwd:
+class QDataStream;
+
+
+
+
+
 class Page:
 	public QGraphicsScene
 {
@@ -46,6 +53,16 @@ public:
 	/** Selects the specified tool. */
 	void setCurrentTool(Tool a_Tool);
 
+	/** Saves all page data into the specified stream. */
+	void saveToStream(QDataStream & a_Stream) const;
+
+	/** Loads all page data from the specified stream.
+	Throws an exception on failure. */
+	void loadFromStream(QDataStream & a_Stream);
+
+	/** Adds a new stroke to the internal representation, returns a shared ptr to it. */
+	StrokePtr addStroke();
+
 protected:
 
 	/** The tool currently selected. */
@@ -68,6 +85,10 @@ protected:
 	void mousePressEvent  (QGraphicsSceneMouseEvent * a_MouseEvent) override;
 	void mouseMoveEvent   (QGraphicsSceneMouseEvent * a_MouseEvent) override;
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent * a_MouseEvent) override;
+
+	/** Loads all page data from the specified stream, after it was decided that it is a version 0 stream.
+	Throws an exception on failure. */
+	void loadFromStreamV0(QDataStream & a_Stream);
 };
 
 

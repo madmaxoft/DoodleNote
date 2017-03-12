@@ -22,6 +22,13 @@
 
 
 
+// fwd:
+class QDataStream;
+
+
+
+
+
 class Stroke
 {
 public:
@@ -57,10 +64,23 @@ public:
 	/** Returns the (read only) points in this stroke. */
 	const std::vector<Point> & points() const { return m_Points; }
 
+	/** Saves all stroke data into the specified stream. */
+	void saveToStream(QDataStream & a_Stream) const;
+
+	/** Loads all stroke data from the specified stream.
+	Throws an exception on failure. */
+	void loadFromStream(QDataStream & a_Stream);
+
+
 protected:
 
 	/** Individual points in the stroke. */
 	std::vector<Point> m_Points;
+
+
+	/** Loads all stroke data from the specified stream, after it was decided that it is a version 0 stream.
+	Throws an exception on failure. */
+	void loadFromStreamV0(QDataStream & a_Stream);
 };
 
 typedef std::shared_ptr<Stroke> StrokePtr;
