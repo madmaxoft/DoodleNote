@@ -88,7 +88,7 @@ PagePtr Document::addPage()
 {
 	auto page = std::make_shared<Page>();
 	m_Pages.push_back(page);
-	connect(page.get(), SIGNAL(changed()), this, SLOT(pageChanged()));
+	connect(page.get(), &Page::changed, this, &Document::internalPageChanged);
 	m_IsModified = true;
 	return page;
 }
@@ -128,10 +128,15 @@ void Document::loadFromStreamV0(QDataStream & a_Stream)
 
 
 
-void Document::pageChanged()
+void Document::internalPageChanged()
 {
+	// Mark document as modified:
 	m_IsModified = true;
+
+	// Emit the outer signal:
+	emit pageChanged(dynamic_cast<Page *>(sender()));
 }
+
 
 
 

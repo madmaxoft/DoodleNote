@@ -55,6 +55,7 @@ QPainterPath Stroke::toPath() const
 void Stroke::addPoint(qreal a_X, qreal a_Y, std::chrono::milliseconds a_Timestamp)
 {
 	m_Points.emplace_back(a_X, a_Y, a_Timestamp);
+	emit changed();
 }
 
 
@@ -86,6 +87,43 @@ void Stroke::loadFromStream(QDataStream & a_Stream)
 		return;
 	}
 	throw std::runtime_error("Stroke uses an unknown version");
+}
+
+
+
+
+
+QRectF Stroke::getBoundingBox() const
+{
+	if (m_Points.empty())
+	{
+		return QRectF();
+	}
+
+	auto t = m_Points[0].m_Y;
+	auto l = m_Points[0].m_X;
+	auto b = t;
+	auto r = l;
+	for (const auto & p: m_Points)
+	{
+		if (p.m_X < l)
+		{
+			l = p.m_X;
+		}
+		if (p.m_X > r)
+		{
+			r = p.m_X;
+		}
+		if (p.m_Y < t)
+		{
+			t = p.m_Y;
+		}
+		if (p.m_Y > b)
+		{
+			b = p.m_Y;
+		}
+	}
+	return QRectF(l, t, r - l, b - t);
 }
 
 

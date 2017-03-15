@@ -57,6 +57,19 @@ public:
 	/** Returns all the strokes in the page, read-only. */
 	const StrokePtrs & strokes() const { return m_Strokes; }
 
+	/** Returns a preview image for the page of the specified dimensions. */
+	QPixmap render(int a_Width, int a_Height);
+
+	/** Returns the bounding box of all items in this page.
+	If there are no items, returns an empty QRect. */
+	QRectF getBoundingBox() const;
+
+signals:
+
+	/** Emitted when the data in the page is changed. */
+	void changed();
+
+
 protected:
 
 	/** Individual strokes comprising the page. */

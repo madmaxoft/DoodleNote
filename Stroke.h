@@ -29,8 +29,13 @@ class QDataStream;
 
 
 
-class Stroke
+class Stroke:
+	public QObject
 {
+	Q_OBJECT
+	typedef QObject Super;
+
+
 public:
 
 	/** Representation of a single point of the stroke. */
@@ -70,6 +75,16 @@ public:
 	/** Loads all stroke data from the specified stream.
 	Throws an exception on failure. */
 	void loadFromStream(QDataStream & a_Stream);
+
+	/** Returns the bounding box of all points in this stroke.
+	If there are no points, returns an empty QRect. */
+	QRectF getBoundingBox() const;
+
+
+signals:
+
+	/** Emitted when the data in the stroke is changed. */
+	void changed();
 
 
 protected:

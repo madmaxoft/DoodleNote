@@ -17,6 +17,7 @@
 #include <memory>
 #include <QMainWindow>
 #include "PageScene.h"
+#include "DocumentPageModel.h"
 
 
 
@@ -92,11 +93,17 @@ protected:
 	/** The convertor from Page to QGraphicScene, used for display and interaction. */
 	PageScene m_PageScene;
 
+	/** The model for viewing pages in a list view. */
+	DocumentPageModel m_DocumentPagesModel;
+
 
 	/** If the document is modified, asks the user whether to save.
 	Returns true if either the document is saved or the user wants to discard changes.
 	Returns false if the next action (opening / exiting / ...) should be aborted. */
 	bool checkDocumentModifiedSave();
+
+	/** Sets the specified document for view. */
+	void setDocument(std::shared_ptr<Document> a_Document);
 };
 
 

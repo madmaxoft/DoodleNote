@@ -68,6 +68,20 @@ public:
 	/** Adds a new page. */
 	PagePtr addPage();
 
+
+signals:
+
+	/** Emitted when the data in the page is changed. */
+	void pageChanged(Page * a_Page);
+
+	/** Emitted after a page is added (at the end of m_Pages). */
+	void pageAdded();
+
+	/** Emitted after a page is inserted.
+	a_InsertedAfterIndex is the index of the page after which the page has been inserted. */
+	void pageInserted(int a_InsertedAfterIndex);
+
+
 protected:
 
 	/** All pages in the document. */
@@ -89,8 +103,8 @@ protected:
 
 protected slots:
 
-	/** Emitted by a page when its contents change (due to user input). */
-	void pageChanged();
+	/** Emitted by Page object when then change, this slot just redirects to pageChanged() with the proper page. */
+	void internalPageChanged();
 };
 
 

@@ -7,6 +7,7 @@
 
 
 #include "Page.h"
+#include <QPainter>
 
 
 
@@ -56,6 +57,8 @@ StrokePtr Page::addStroke()
 {
 	auto stroke = std::make_shared<Stroke>();
 	m_Strokes.push_back(stroke);
+	connect(stroke.get(), &Stroke::changed, this, &Page::changed);
+	emit changed();
 	return stroke;
 }
 
@@ -67,7 +70,50 @@ StrokePtr Page::addStroke(qreal a_X, qreal a_Y)
 {
 	auto stroke = std::make_shared<Stroke>(a_X, a_Y);
 	m_Strokes.push_back(stroke);
+	connect(stroke.get(), &Stroke::changed, this, &Page::changed);
+	emit changed();
 	return stroke;
+}
+
+
+
+
+
+QPixmap Page::render(int a_Width, int a_Height)
+{
+	QPixmap res(a_Width, a_Height);
+	res.fill(Qt::white);
+	auto boundingBox = getBoundingBox();
+	if (boundingBox.isEmpty())
+	{
+		return res;
+	}
+	QPainter painter(&res);
+	QTransform transform;
+	auto factor = std::min(a_Width / boundingBox.width(), a_Height / boundingBox.height());
+	transform.scale(factor, factor);
+	transform.translate(-boundingBox.left(), -boundingBox.top());
+	painter.setTransform(transform);
+	for (const auto & s: m_Strokes)
+	{
+		painter.drawPath(s->toPath());
+	}
+	return res;
+}
+
+
+
+
+
+QRectF Page::getBoundingBox() const
+{
+	QRectF res;
+	for (const auto & s: m_Strokes)
+	{
+		auto bb = s->getBoundingBox();
+		res = res.united(bb);
+	}
+	return res;
 }
 
 

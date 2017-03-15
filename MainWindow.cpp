@@ -20,14 +20,17 @@
 MainWindow::MainWindow(QWidget * a_Parent):
 	Super(a_Parent),
 	m_UI(new Ui::MainWindow),
-	m_Document(std::make_shared<Document>())
+	m_DocumentPagesModel(180, 240)
 {
-	m_PageScene.setPage(m_Document->currentPage());
+	setDocument(std::make_shared<Document>());
+
 	m_PageScene.setCurrentTool(PageScene::toolDraw);
 	m_UI->setupUi(this);
 	m_UI->gvMain->setScene(&m_PageScene);
 	m_UI->gvMain->setRenderHint(QPainter::Antialiasing, true);
 	// TODO: m_UI->gvMain->setDragMode(QGraphicsView::RubberBandDrag);
+
+	m_UI->lvPages->setModel(&m_DocumentPagesModel);
 
 	// Set up Tool selection:
 	auto grp = new QActionGroup(this);
@@ -212,6 +215,17 @@ bool MainWindow::checkDocumentModifiedSave()
 			return true;
 		}
 	}
+}
+
+
+
+
+
+void MainWindow::setDocument(std::shared_ptr<Document> a_Document)
+{
+	m_Document = a_Document;
+	m_DocumentPagesModel.setDocument(a_Document);
+	m_PageScene.setPage(m_Document->currentPage());
 }
 
 
